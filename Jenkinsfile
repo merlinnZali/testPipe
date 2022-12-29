@@ -64,7 +64,7 @@ pipeline {
               }
             }
         }
-        stage('Build') {
+        stage('Build & SonarQube analysis') {
             steps {
                 script {
                     build()
@@ -73,20 +73,26 @@ pipeline {
 
                 withSonarQubeEnv('sonarqube') {
                    //sh "mvn -DskipTests sonar:sonar"
-                   sh 'mvn clean verify sonar:sonar'
+                   sh 'mvn clean package sonar:sonar'
                 }
                 //withSonarQubeEnv(credentialsId: 'token-sonar') {
                     //sh 'mvn clean verify sonar:sonar
                 //}
 
-                sh "mvn clean package"
                 sh '''
                   git status
                   ls .
                   cat pom.xml
                 '''
             }
-
+        }
+        stage("Quality Gate") {
+            steps {
+              timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
+                // true = set pipeline to UNSTABLE, false = don't
+                waitForQualityGate abortPipeline: true //// Reuse taskId previously collected by withSonarQubeEnv
+              }
+            }
         }
         stage('Deploy') { 
             steps {
