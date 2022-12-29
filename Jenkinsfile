@@ -125,7 +125,8 @@ pipeline {
 
 /////
 def init() {
-    pom = readMavenPom file: 'pom.xml'  // pipeline utility step <= library
+    pom = readMavenPom file: 'pom.xml'  // library pipeline-utility-steps to be install
+    echo '--------- GET VERSION ------------'
     VERSION_DEFAULT = pom.version
     echo '--------- VERSION_DEFAULT ------------'
     echo VERSION_DEFAULT
