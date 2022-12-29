@@ -137,7 +137,7 @@ def init() {
     echo "VERSION: ${VERSION_DEFAULT}"
     echo "ENVIRONMENT: ${params.ENVIRONMENT}"
     if( params.ENVIRONMENT == 'PREPROD' || params.ENVIRONMENT == 'PREPROD-UAT-ACCEPTANCE'){
-        timeout(time: 30, unit: 'SECONDS') {
+        timeout(time: 60 * 2, unit: 'SECONDS') {
 
             def VERSION_TAB
             VERSION_ACTUELLE = VERSION_DEFAULT.replaceAll('-SNAPSHOT','').trim()
