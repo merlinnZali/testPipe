@@ -336,8 +336,8 @@ def afterDeliver() {
             git add .
           '''
           sh "git commit -m 'Triggered Build: ${env.version_suivante}-SNAPSHOT'"
-          //sh "git push -u origin HEAD:main https://${GIT_USER}:${encodedPassword}@github.com/merlinnZali/testPipe.git/"
-          sh "git push -u origin HEAD:main"
+          sh "git push -u origin HEAD:main https://${GIT_USER}:${encodedPassword}@github.com/merlinnZali/testPipe.git/"
+          //sh "git push -u origin HEAD:main"
          
       }
   }else{
