@@ -135,7 +135,7 @@ def init() {
     VERSION_DEFAULT = version
     echo '--------- GET VERSION ------------'
     echo "VERSION: ${VERSION_DEFAULT}"
-
+    echo "ENVIRONMENT: ${params.ENVIRONMENT}"
     if( params.ENVIRONMENT == 'PREPROD'){
         timeout(time: 30, unit: 'SECONDS') {
 
