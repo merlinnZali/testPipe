@@ -381,3 +381,25 @@ def afterDeliver() {
 
   }
 }
+/*
+Single branch: release
+  checkout, build & sonar (analysis and codeQuality), build docker image,
+  tag as preprod
+  deploy in preprod,
+  publish(nexus, registry)?Y/N
+  if Y => tag as release-x, merge into master(new version), merge into dev(new version + snap)
+    push master(new version), dev(new version + snap)
+    publish master(new version), dev(new version + snap)
+    deploy in prod
+    clear dir
+  if N => clear dir
+multi branch: all exclude release
+  select branch
+  if Feature or dev:
+     checkout, build & sonar (analysis and codeQuality), build docker image,
+     deploy in dev then if wanted also in test
+
+
+
+
+*/
