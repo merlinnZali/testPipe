@@ -295,7 +295,7 @@ def deliver() {
 def afterDeliver() {
   if( params.ENVIRONMENT == 'PREPROD' || params.ENVIRONMENT == 'PREPROD-UAT-ACCEPTANCE'){
       //TODO: ----> UPDATE develop to SNAPSHOT
-      echo "---------- upadate pom version to ----->  ${env.version_suivante} -------------------"
+      echo "---------- upadate pom version to ----->  ${env.version_suivante}-SNAPSHOT -------------------"
       sh "mvn versions:set -DnewVersion=${env.version_suivante}-SNAPSHOT"
       echo "push to git"
       //sshagent (credentials: ['7afc0e25-f6dd-41d5-97a5-1422d961386f']){
@@ -328,14 +328,14 @@ def afterDeliver() {
          def encodedPassword = URLEncoder.encode("$GIT_PASSWORD",'UTF-8')
          // https://github.com/TTM-Developers/testPipe.git
          //git push -u origin HEAD:main
-         //git push https://${GIT_USER}:${encodedPassword}@github.com/${GIT_USER}/testPipe.git
+         //git push https://${GIT_USER}:${encodedPassword}@github.com/merlinnZali/testPipe.git/
          sh '''
             git config user.name merlin-jenkins
             git config user.email tamlamerlin@gmail.com
             git add .
           '''
-          sh "git commit -m 'Triggered Build: ${env.version_suivante}'"
-          //sh "git push -u origin HEAD:main https://${GIT_USER}:${encodedPassword}@github.com/TTM-Developers/testPipe.git"
+          sh "git commit -m 'Triggered Build: ${env.version_suivante}-SNAPSHOT'"
+          //sh "git push -u origin HEAD:main https://${GIT_USER}:${encodedPassword}@github.com/merlinnZali/testPipe.git/"
           sh "git push -u origin HEAD:main"
          
       }
