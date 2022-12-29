@@ -138,7 +138,7 @@ def init() {
     echo IMAGE
     echo '--------- AGAIN ------------'
     echo "IMAGE: ${IMAGE}"
-    echo "VERSION: ${VERSION}"
+    echo "VERSION: ${VERSION_DEFAULT}"
     echo '--------- AGAIN END------------'
     if( params.ENVIRONMENT == 'PREPROD'){
         timeout(time: 30, unit: 'SECONDS') {
