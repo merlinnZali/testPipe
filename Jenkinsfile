@@ -36,7 +36,6 @@ pipeline {
     tools { 
         maven 'maven'
         jdk 'java-11'
-        //sonarQube 'sonarqube'
     }
     parameters {
         choice(name: 'ENVIRONMENT',
@@ -86,14 +85,20 @@ pipeline {
                 '''
             }
         }
+        /*
+        // Pre-requisites:
+        // Configure a webhook in your SonarQube server pointing to
+        //Log as admin then: Administration/Configuration/Webhooks
         stage("Quality Gate") {
             steps {
               timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
                 // true = set pipeline to UNSTABLE, false = don't
                 waitForQualityGate abortPipeline: true //// Reuse taskId previously collected by withSonarQubeEnv
+                //waitForQualityGate webhookSecretId: 'yourSecretID' abortPipeline: true
+                // yourSecretID: the secret used during the webhook creation
               }
             }
-        }
+        }*/
         stage('Deploy') { 
             steps {
                 //deploy to nexus
