@@ -56,4 +56,16 @@ Run ServiceMode: dans la console(admin)
      mvn clean compile package deploy
      
      
->Ceci va deployer le projet dans nexus   
+>Ceci va deployer le projet dans nexus  
+
+
+## SonarQube
+
+```shell
+        mvn clean verify sonar:sonar
+        
+mvn clean verify sonar:sonar -Dsonar.login=squ_6042abb6573ee317f6f2de0075da54c5addaec91
+//or
+mvn clean install
+mvn sonar:sonar -Dsonar.login=squ_6042abb6573ee317f6f2de0075da54c5addaec91
+```

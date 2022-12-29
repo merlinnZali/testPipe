@@ -73,6 +73,9 @@ pipeline {
                 //withSonarQubeEnv('sonarqube') {
                   //  sh "mvn -DskipTests sonar:sonar"
                 //}
+                withSonarQubeEnv(credentialsId: 'token-sonar') {
+                    sh 'mvn clean verify sonar:sonar -Dsonar.login=squ_6042abb6573ee317f6f2de0075da54c5addaec91'
+                }
 
                 sh "mvn clean package"
                 sh '''
