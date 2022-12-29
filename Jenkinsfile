@@ -3,6 +3,7 @@
 def VERSION_SUIVANTE
 def VERSION_ACTUELLE
 def VERSION_DEFAULT
+def IMAGE
 def pom
 //preprod => test d endurance, technique ...
 pipeline {
@@ -126,10 +127,15 @@ pipeline {
 /////
 def init() {
     pom = readMavenPom file: 'pom.xml'  // library pipeline-utility-steps to be install
+
+    IMAGE = readMavenPom().getArtifactId()
+    VERSION_DEFAULT = readMavenPom().getVersion()
     echo '--------- GET VERSION ------------'
-    VERSION_DEFAULT = pom.version
+    // VERSION_DEFAULT = pom.version
     echo '--------- VERSION_DEFAULT ------------'
     echo VERSION_DEFAULT
+    echo '--------- ARTIFACT ------------'
+    echo IMAGE
 
     if( params.ENVIRONMENT == 'PREPROD'){
         timeout(time: 30, unit: 'SECONDS') {
