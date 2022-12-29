@@ -36,6 +36,7 @@ pipeline {
     tools { 
         maven 'maven'
         jdk 'java-11'
+        sonarQube 'sonarqube'
     }
     parameters {
         choice(name: 'ENVIRONMENT',
@@ -70,12 +71,13 @@ pipeline {
                 }
                 echo "---------------  clean compile package -------------------"
 
-                //withSonarQubeEnv('sonarqube') {
-                  //  sh "mvn -DskipTests sonar:sonar"
-                //}
-                withSonarQubeEnv(credentialsId: 'token-sonar') {
-                    sh 'mvn clean verify sonar:sonar -Dsonar.login=squ_6042abb6573ee317f6f2de0075da54c5addaec91'
+                withSonarQubeEnv('sonarqube') {
+                   sh "mvn -DskipTests sonar:sonar"
+                   // sh 'sonar-scanner'
                 }
+                //withSonarQubeEnv(credentialsId: 'token-sonar') {
+                    //sh 'mvn clean verify sonar:sonar -Dsonar.login=squ_6042abb6573ee317f6f2de0075da54c5addaec91'
+                //}
 
                 sh "mvn clean package"
                 sh '''
