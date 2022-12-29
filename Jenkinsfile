@@ -15,8 +15,8 @@ pipeline {
         //PATH = /opt/apache-maven-xxxx/bin:$PATH  <= MANUAL MAVEN PAH SETTING
     //}
     tools { 
-        maven 'Maven' 
-        jdk 'Java' 
+        maven 'maven'
+        jdk 'java-11'
     }
     parameters {
         choice(name: 'ENVIRONMENT',
