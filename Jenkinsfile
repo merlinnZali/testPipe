@@ -74,6 +74,7 @@ pipeline {
                     steps {
                         echo 'Deliver1'
                         script {
+                            echo 'deliver'
                             // deliver()
                         }
                         
@@ -82,6 +83,7 @@ pipeline {
                         always {
                             echo 'After deploy to tomcat'
                             script {
+                                echo 'afterDeliver'
                                 // afterDeliver()
                             }
                         }
