@@ -53,7 +53,7 @@ pipeline {
                 echo "---------------  clean compile package -------------------"
 
                 sh "mvn clean package"
-                //withSonarQubeEnv('sonarLocal') {
+                //withSonarQubeEnv('sonarqube') {
                   //  sh "mvn -DskipTests sonar:sonar"
                 //}
             }
@@ -136,7 +136,7 @@ def init() {
     echo '--------- GET VERSION ------------'
     echo "VERSION: ${VERSION_DEFAULT}"
     echo "ENVIRONMENT: ${params.ENVIRONMENT}"
-    if( params.ENVIRONMENT == 'PREPROD'){
+    if( params.ENVIRONMENT == 'PREPROD' || params.ENVIRONMENT == 'PREPROD-UAT-ACCEPTANCE'){
         timeout(time: 30, unit: 'SECONDS') {
 
             def VERSION_TAB
@@ -185,7 +185,7 @@ def init() {
             VERSION_SUIVANTE = VERSION_TAB.join('.')
             echo 'la version siuvante est:'
             echo VERSION_SUIVANTE
-         
+
             // Show the select input modal
             def INPUT_PARAMS = input message: 'Please Provide Parameters', ok: 'Next',
                 parameters: [
@@ -207,14 +207,14 @@ def init() {
 }
 
 def build() {
-  if( params.ENVIRONMENT == 'PREPROD'){
+  if( params.ENVIRONMENT == 'PREPROD' || params.ENVIRONMENT == 'PREPROD-UAT-ACCEPTANCE'){
       echo "---------- upadate pom version to ----->  ${env.version_actuelle} -------------------"
-      sh "mvn versions:set -DnewVersion=${env.version_actuelle}"
+      // sh "mvn versions:set -DnewVersion=${env.version_actuelle}"
   }
 }
 
 def deliver() {
-    if( params.ENVIRONMENT == 'PREPROD'){
+    if( params.ENVIRONMENT == 'PREPROD' || params.ENVIRONMENT == 'PREPROD-UAT-ACCEPTANCE'){
         echo "----- deploy to tomcat ------------ vesion --> ${env.version_actuelle} -------------"
      // UNCOMMENT THE ONE U WANT TO USE
       //-----------1---------Local windows manuel deploiement------------------------------------------------
