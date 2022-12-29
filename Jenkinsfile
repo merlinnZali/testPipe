@@ -1,5 +1,23 @@
  //on windows system, bat should replace sh(unix)
 
+
+/*
+From release: git checkout release-x
+sh 'git tag -a tagName -m "Your tag comment"'
+sh 'git commit -am "add a tag to release'
+
+sh 'git checkout develop'
+sh 'git merge release-x'
+sh 'git commit -am "Merged release-x branch to develop'
+sh "git push origin develop"
+
+sh 'git checkout master'
+sh 'git merge develop'
+sh 'git commit -am "Merged develop branch to master'
+sh "git push origin master"
+
+// remove release-x to remote
+*/
 def VERSION_SUIVANTE
 def VERSION_ACTUELLE
 def VERSION_DEFAULT
@@ -336,8 +354,10 @@ def afterDeliver() {
             git add .
           '''
           sh "git commit -m 'Triggered Build: ${env.version_suivante}-SNAPSHOT'"
-          sh 'git push -u origin HEAD:main https://$GIT_USER:$encodedPassword@github.com/merlinnZali/testPipe.git/'
-          //sh "git push -u origin HEAD:main"
+          //sh 'git push -u origin HEAD:main https://$GIT_USER:$encodedPassword@github.com/merlinnZali/testPipe.git/'
+          sh 'git push https://$GIT_USER:$encodedPassword@github.com/merlinnZali/testPipe.git/'
+          // sh("git push origin <local-branch>:<remote-branch>")
+          //sh "git push origin main:main"
          
       }
   }else{
