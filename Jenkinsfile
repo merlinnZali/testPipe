@@ -74,7 +74,7 @@ pipeline {
                     steps {
                         echo 'Deliver1'
                         script {
-                            deliver()
+                            // deliver()
                         }
                         
                     }
@@ -82,7 +82,7 @@ pipeline {
                         always {
                             echo 'After deploy to tomcat'
                             script {
-                                afterDeliver()
+                                // afterDeliver()
                             }
                         }
                     }
@@ -123,7 +123,7 @@ pipeline {
 
 /////
 def init() {
-    pom = readMavenPom file: 'pom.xml'  // pipeline utility step <= librayry
+    pom = readMavenPom file: 'pom.xml'  // pipeline utility step <= library
     VERSION_DEFAULT = pom.version
     echo '--------- VERSION_DEFAULT ------------'
     echo VERSION_DEFAULT
