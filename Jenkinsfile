@@ -52,10 +52,15 @@ pipeline {
                 }
                 echo "---------------  clean compile package -------------------"
 
-                sh "mvn clean package"
                 //withSonarQubeEnv('sonarqube') {
                   //  sh "mvn -DskipTests sonar:sonar"
                 //}
+
+                sh "mvn clean package"
+                sh '''
+                  git status
+                  ls .
+                '''
             }
 
         }
@@ -64,7 +69,7 @@ pipeline {
                 //deploy to nexus
                 retry(3) {
                      echo "---------- deploy to nexus ----->  mvn -DskipTests deploy -------------------"
-                    //sh "mvn -DskipTests deploy" this will use the deplyment setting from pom.xml
+                    //sh "mvn -DskipTests deploy" this will use the deployment setting from pom.xml
                     // there is a way using the plugin nexus
                 }
             }
@@ -75,7 +80,6 @@ pipeline {
                     steps {
                         echo 'Deliver1'
                         script {
-                            echo 'deliver'
                             deliver()
                         }
                         
@@ -209,7 +213,7 @@ def init() {
 def build() {
   if( params.ENVIRONMENT == 'PREPROD' || params.ENVIRONMENT == 'PREPROD-UAT-ACCEPTANCE'){
       echo "---------- upadate pom version to ----->  ${env.version_actuelle} -------------------"
-      // sh "mvn versions:set -DnewVersion=${env.version_actuelle}"
+      sh "mvn versions:set -DnewVersion=${env.version_actuelle}"
   }
 }
 
@@ -287,7 +291,7 @@ def deliver() {
 }
 
 def afterDeliver() {
-  if( params.ENVIRONMENT == 'PREPROD'){
+  if( params.ENVIRONMENT == 'PREPROD' || params.ENVIRONMENT == 'PREPROD-UAT-ACCEPTANCE'){
       echo "---------- upadate pom version to ----->  ${env.version_suivante} -------------------"
       sh "mvn versions:set -DnewVersion=${env.version_suivante}-SNAPSHOT"
       echo "push to git"
@@ -303,8 +307,11 @@ def afterDeliver() {
             //git push -u origin HEAD:master
          //'''
       //}
-      //withCredentials([usernamePassword(credentialsId: '7afc0e25-f6dd-41d5-97a5-1422d961386f', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
-      withCredentials([usernamePassword(credentialsId: '7afc0e25-f6dd-41d5-97a5-1422d961386f', passwordVariable: 'GIT_USER', usernameVariable: 'GIT_PASSWORD')]) { 
+      // Using GITHUB-ACCESS-TOKEN
+      //withCredentials([string(credentialsId: 'github-access-token', variable: 'GITHUB-TOKEN')]) {
+          // some block
+      //}
+      withCredentials([usernamePassword(credentialsId: 'GIT_USER_PASSWD', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
          //sh '''
             //git show-ref
             //git config --global user.name "merlin"
