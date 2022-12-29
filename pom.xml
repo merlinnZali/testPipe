@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.ttm</groupId>
+    <artifactId>nexus</artifactId>
+    <version>1.4-SNAPSHOT</version>
+    <!-- Release
+      <version>1.0</version>
+    -->
+
+    <packaging>war</packaging>
+    <name>nexus</name>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.2.6.RELEASE</version>
+    </parent>
+
+    <properties>
+        <java.version>11</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+
+        <!-- This is a web application -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Tomcat embedded container-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- JSTL for JSP -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+        </dependency>
+
+        <!-- Need this to compile JSP -->
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Need this to compile JSP,
+            tomcat-embed-jasper version is not working, no idea why -->
+        <dependency>
+            <groupId>org.eclipse.jdt.core.compiler</groupId>
+            <artifactId>ecj</artifactId>
+            <version>4.6.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Optional, test for static content, bootstrap CSS-->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>3.3.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>nexus</finalName>
+        <plugins>
+            <!-- Package as an executable jar/war -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.4.0.905</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.2</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>post-unit-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Sets the path to the file which contains the execution data. -->
+                            <dataFile>target/jacoco.exec</dataFile>
+                            <!-- Sets the output directory for the code coverage report. -->
+                            <outputDirectory>target/jacoco-ut</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
+    </build>
+
+    <distributionManagement>
+        <repository>
+            <id>deployment</id>
+            <name>Internal Release</name>
+            <url>http://localhost:8081/repository/nexusFirst-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>deployment</id>
+            <name>Internal Snapshot</name>
+            <url>http://localhost:8081/repository/nexusFirst-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>

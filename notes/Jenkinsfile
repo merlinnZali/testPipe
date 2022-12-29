@@ -1,0 +1,177 @@
+//on windows system bat should be replace sh(unix)
+// Define variables (based on parameters set in a Jenkins job)
+// and convert them to lowercase
+def deploy_env = params.DEPLOY_ENV.toLowerCase()
+
+// Conditionally define a variable 'impact'
+if (deploy_env == 'prod') {
+  server = "prod_server"
+} else if (deploy_env == 'hob') {
+  server = "hob_server"
+} else if (deploy_env == 'hot') {
+  server = "hot_server"
+} else if (deploy_env == 'assembleage') {
+  server = "ass_server"
+} else {
+  server = "unknown"
+}
+
+pipeline {
+    //agent { label "any-executor" }
+    agent any
+    tools { 
+        maven 'Maven-3.3.9' 
+        jdk 'JAVA_8' 
+    }
+    parameters{
+        choice(name: 'ENVIRONMENT1',
+            choices: 'testeur\ndeveloppeur',
+            description: 'Please select the User')
+        booleanParam(name: 'CAN_DANCE',
+            defaultValue: 'false',
+            description: 'Checkbox parameter')
+        string(name: 'sTrangeParam',
+            defaultValue: 'Dance',
+            description: 'Do the thing')
+    }
+
+    options {
+        timestamps()
+        //ansiColor("xterm")
+    }
+    
+    stages {
+        stage ("Server") {
+          steps {
+            echo "The impact is ${server}"
+            echo "The impact is ${params.ENVIRONMENT1}"
+            echo "The impact is ${params.CAN_DANCE}"
+            echo "The impact is ${params.sTrangeParam}"
+          }
+        }
+        stage("Gather Deployment Parameters") {
+            steps {
+                timeout(time: 30, unit: 'SECONDS') {
+                    script {
+                        // Show the select input modal
+                       def INPUT_PARAMS = input message: 'Please Provide Parameters', ok: 'Next',
+                            parameters: [
+                                choice(name: 'ENVIRONMENT',
+                                    choices: ['dev','qa'].join('\n'),
+                                    description: 'Please select the Environment'),
+                                choice(name: 'IMAGE_TAG',
+                                    choices: ['ubuntu','jenkins'].join('\n'),
+                                    description: 'Available Docker Images'),
+                                booleanParam(name: 'DoIt',
+                                    defaultValue: 'Yes',
+                                    description: 'Checkbox parameter'),
+                                string(name: 'version',
+                                    defaultValue: '2.3.0',
+                                    description: 'Do the thing')
+                            ]
+                        env.ENVIRONMENT = INPUT_PARAMS.ENVIRONMENT
+                        env.IMAGE_TAG = INPUT_PARAMS.IMAGE_TAG
+                        env.DoIt = INPUT_PARAMS.DoIt
+                        env.version = INPUT_PARAMS.version
+                        echo env.ENVIRONMENT
+                    }
+                }
+            }
+        }
+        stage("Use Deployment Parameters") {
+            steps {
+                script {
+                    echo "All parameters have been set as Environment Variables"
+                    echo "Selected Environment: ${env.ENVIRONMENT}"
+                    echo "Selected Tag: ${env.IMAGE_TAG}"
+                    echo "DoIt: ${env.DoIt}"
+                    echo "Version: ${env.version}"
+                }
+            }
+        }
+        stage ('Initialize') {
+            steps {
+                bat '''
+                    echo "PATH = ${PATH}"
+                    echo "M2_HOME = ${M2_HOME}"
+                ''' 
+            }
+        }
+        stage('Proceed') { 
+            steps {
+                input('Do you want to proceed?')
+            }
+        }
+        stage('Build') { 
+            steps {
+                 echo 'mvn clean package'
+                //bat "mvn clean package"
+                //withSonarQubeEnv('sonarLocal') {
+                  //  bat "mvn sonar:sonar"
+                //}
+            }
+        }
+        stage('Deploy') { 
+            steps {
+                retry(3) {
+                    echo 'mvn deploy'
+                    //bat "mvn deploy" 
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Tesssssssssssssssssst'
+            }
+            post {
+                always {
+                    echo 'After Tesssssssssssssssssssssst'
+                }
+            }
+        }
+        stage('Deliver_master_only') {
+            when {
+                anyOf {
+                    expression { return deploy_env == 'prod' }
+                }
+            }
+            steps {
+                echo 'deploy also on canary'
+            }
+        }
+        stage('Parallel') {
+            parallel{
+                stage('Parallel1') {
+                    steps {
+                        echo "Parallel 1"
+                    }
+                }
+                stage('Parallel2') {
+                    steps {
+                        echo "Parallel 1"
+                    }
+                }
+            } 
+        }
+    }
+    post {
+        always {
+            echo 'This will always run'
+        }
+        success {
+            echo 'This will run only if succeful'
+        }
+        failure {
+            echo 'This will run only if failed'
+        }
+        unstable {
+            echo 'This will run only if the run was marked as unstable'
+        }
+        changed {
+            echo 'This will run only if the result change from one state to anorther one: eg [uninstable to succeful]'
+        }
+        aborted {
+            echo 'Has beenn aborted'
+        }  
+    }
+}
