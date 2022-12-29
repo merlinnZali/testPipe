@@ -76,7 +76,7 @@ pipeline {
                         echo 'Deliver1'
                         script {
                             echo 'deliver'
-                            // deliver()
+                            deliver()
                         }
                         
                     }
@@ -127,12 +127,15 @@ pipeline {
 /////
 def init() {
     pom = readMavenPom file: 'pom.xml'  // library pipeline-utility-steps to be install
-    echo '--------- GET VERSION ------------'
+
+    // IMAGE = readMavenPom().getArtifactId() DEPRECATED
+    // VERSION_DEFAULT = readMavenPom().getVersion() DEPRECATED
+
     def version = sh script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true
     VERSION_DEFAULT = version
-    echo '--------- AGAIN ------------'
+    echo '--------- GET VERSION ------------'
     echo "VERSION: ${VERSION_DEFAULT}"
-    echo '--------- AGAIN END------------'
+
     if( params.ENVIRONMENT == 'PREPROD'){
         timeout(time: 30, unit: 'SECONDS') {
 
@@ -213,7 +216,7 @@ def build() {
 def deliver() {
     if( params.ENVIRONMENT == 'PREPROD'){
         echo "----- deploy to tomcat ------------ vesion --> ${env.version_actuelle} -------------"
-     
+     // UNCOMMENT THE ONE U WANT TO USE
       //-----------1---------Local windows manuel deploiement------------------------------------------------
         /*
            powershell 'build.ps1'            
@@ -225,7 +228,8 @@ def deliver() {
            """)
         */
       //-------fin-----Local windows manuel deploiement------------------------------------------------
-     
+
+     /*
       //---------2---------------REMOTE deploiement------------use SSH------------from ssh agent plugin------------------------
       sshagent(['deploy_tomcat']) {
         // scp <src_file> server_username@IP:<dest_file>
@@ -240,10 +244,11 @@ def deliver() {
         '''
        
       }
+      */
       //---------3----------------------Or using deploiement plugin from jenkins----------------------------
     }else{
       echo "----- deploy to tomcat ------------ vesion --> ${env.version_default} -------------"
-     
+      // UNCOMMENT THE ONE U WANT TO USE
       //---------1-------------------------Local windows manuel deploiement------------------------------------------------
       //----Avec powershell----
       /*
@@ -262,6 +267,7 @@ def deliver() {
      
       //------3-----------REMOTE deploiement------------use SSH------------from ssh agent plugin------------------------
       echo "-------REMOTE deploiement------------use SSH------------from ssh agent plugin--------------"
+      /*
       sshagent(['deploy_tomcat']) {
         // scp <src_file> server_username@IP:<dest_file>
         // to avoid KeyChecking: -o StrictHostKeyChecking=no
@@ -275,6 +281,7 @@ def deliver() {
         '''
        
       }
+      */
       //-------4-----------Or using deploiement plugin from jenkins
     }
 }
@@ -313,8 +320,8 @@ def afterDeliver() {
          //git push -u origin HEAD:main
          //git push https://${GIT_USER}:${encodedPassword}@github.com/${GIT_USER}/testPipe.git
          sh '''
-            git config user.name merlin
-            git config user.email merlin@gmail.com
+            git config user.name merlin-jenkins
+            git config user.email tamlamerlin@gmail.com
             git add .
           '''
           sh "git commit -m 'Triggered Build: ${env.version_suivante}'"
