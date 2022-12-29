@@ -127,17 +127,10 @@ pipeline {
 /////
 def init() {
     pom = readMavenPom file: 'pom.xml'  // library pipeline-utility-steps to be install
-
-    IMAGE = readMavenPom().getArtifactId()
-    VERSION_DEFAULT = readMavenPom().getVersion()
     echo '--------- GET VERSION ------------'
-    // VERSION_DEFAULT = pom.version
-    echo '--------- VERSION_DEFAULT ------------'
-    echo VERSION_DEFAULT
-    echo '--------- ARTIFACT ------------'
-    echo IMAGE
+    def version = sh script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true
+    VERSION_DEFAULT = version
     echo '--------- AGAIN ------------'
-    echo "IMAGE: ${IMAGE}"
     echo "VERSION: ${VERSION_DEFAULT}"
     echo '--------- AGAIN END------------'
     if( params.ENVIRONMENT == 'PREPROD'){
