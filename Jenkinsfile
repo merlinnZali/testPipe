@@ -71,6 +71,7 @@ pipeline {
                      echo "---------- deploy to nexus ----->  mvn -DskipTests deploy -------------------"
                     //sh "mvn -DskipTests deploy" this will use the deployment setting from pom.xml
                     // there is a way using the plugin nexus
+                    //TODO: ----> save release, master and dev on nexus
                 }
             }
         }
@@ -88,8 +89,7 @@ pipeline {
                         always {
                             echo 'After deploy to tomcat'
                             script {
-                                echo 'afterDeliver'
-                                // afterDeliver()
+                                afterDeliver()
                             }
                         }
                     }
@@ -214,6 +214,8 @@ def build() {
   if( params.ENVIRONMENT == 'PREPROD' || params.ENVIRONMENT == 'PREPROD-UAT-ACCEPTANCE'){
       echo "---------- upadate pom version to ----->  ${env.version_actuelle} -------------------"
       sh "mvn versions:set -DnewVersion=${env.version_actuelle}"
+      //TODO: ----> merge release into master and develop
+      //TODO: ----> add a tag
   }
 }
 
@@ -292,6 +294,7 @@ def deliver() {
 
 def afterDeliver() {
   if( params.ENVIRONMENT == 'PREPROD' || params.ENVIRONMENT == 'PREPROD-UAT-ACCEPTANCE'){
+      //TODO: ----> UPDATE develop to SNAPSHOT
       echo "---------- upadate pom version to ----->  ${env.version_suivante} -------------------"
       sh "mvn versions:set -DnewVersion=${env.version_suivante}-SNAPSHOT"
       echo "push to git"
